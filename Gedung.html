@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Building with City Background</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Inisialisasi scene, camera, dan renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Tambahkan background kota
+        const loader = new THREE.TextureLoader();
+        loader.load('https://cdn.pixabay.com/photo/2015/05/31/10/55/night-791519_960_720.jpg', function(texture){
+            scene.background = texture;
+        });
+
+        // Tambahkan geometry (gedung) dan material ke dalam scene
+        const buildingGeometry = new THREE.BoxGeometry(1, 5, 1);
+        const buildingMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
+        const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+        scene.add(building);
+
+        // Posisikan kamera
+        camera.position.z = 10;
+
+        // Fungsi untuk melakukan render scene secara kontinu
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotasi gedung
+            building.rotation.y += 0.01;
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handler untuk memastikan renderer tetap sesuai ukuran layar
+        window.addEventListener('resize', function() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
